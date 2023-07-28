@@ -1,37 +1,41 @@
-const puppeteer = require("puppeteer");
-const { CreateFile } = require("./fileManagment");
+const path = require("path");
+const fs = require("fs");
+const { default: puppeteer } = require("puppeteer");
+const { OpenJson, CreateFile } = require("./fileManagment.js");
+const { ParseTop100 } = require("./parseOptions.js");
 
-const URL = "https://www.beatport.com/";
+(async () => {
+  // Load Files
+  const genres = OpenJson("genres.json");
+  const filesList = await GetFileNames("./tops");
 
-async function parsePageContent(URL, parseFunction) {
-  // Launch the browser
-  const browser = await puppeteer.launch();
+  const fileSet = new Set(filesList);
 
-  // Open a new tab
+  // Puppeteer Config
+  const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
 
-  // Visit the page and wait until network connections are completed
-  await page.goto(URL, { waitUntil: "networkidle2" });
+  for (let { genre, url } of genres) {
+    const listName = `${genre.replaceAll("/", "-")}.json`;
+    if (!fileSet.has(listName)) {
+      await page.goto(url + "/top-100");
+      const content = await page.evaluate(ParseTop100);
 
-  // Interact with the DOM to retrieve the titles
-  const titles = await page.evaluate(parseFunction);
+      const genreDir = path.join("tops", listName);
+      CreateFile(genreDir, JSON.stringify(content));
 
-  // Don't forget to close the browser instance to clean up the memory
+      console.log(listName);
+    }
+  }
+
   await browser.close();
+})();
 
-  // Print the results
-  titles.forEach((title) => console.log(`- ${title}`));
-}
-
-parsePageContent(URL, () => {
-  let genres = [];
-  const menuList = document.querySelectorAll(".dropdown_menu");
-  menuList.forEach((menu) => {
-    menu.querySelectorAll("a").forEach((a) => {
-      genres.push({ genre: a.innerHTML, url: a.href });
+async function GetFileNames(directoryPath) {
+  return new Promise((resolve, reject) => {
+    fs.readdir(directoryPath, (err, f) => {
+      if (err) reject(err);
+      resolve(f);
     });
   });
-
-  const content = JSON.stringify(genres);
-  CreateFile("genres.json", content);
-});
+}

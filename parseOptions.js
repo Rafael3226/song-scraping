@@ -16,12 +16,14 @@ const ParseTop100 = () => {
   const list = document.querySelector(".row");
   const tracks = list.children;
   for (let track of tracks) {
+    const img = track.querySelector("img");
     const trackInfo = track.innerText.split("\n");
     top100.push({
       position: trackInfo[0],
       title: trackInfo[1],
       artist: trackInfo[2],
       label: trackInfo[3],
+      imageURL: img.src,
     });
   }
   return top100;

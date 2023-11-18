@@ -1,5 +1,5 @@
-import { SCRAPPING_URL } from "@src/config";
 import { Page } from "puppeteer";
+import { SCRAPPING_URL } from "../config";
 
 export async function ScrapGenre(page: Page) {
   // Load url from conf

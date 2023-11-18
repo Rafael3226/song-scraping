@@ -2,12 +2,13 @@
   "name": "tracks-scraping",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/main.ts",
+  "main": "./src/main",
   "scripts": {
     "test": "jest",
-    "dev": "nodemon node --env-file .env .",
-    "start": "node --env-file .env -r ts-node/register --loader ts-node/esm .",
-    "build": "tsc --build --verbose ."
+    "dev": "node --env-file .env -r ts-node/register --loader ts-node/esm .",
+    "start": "node --env-file .env ./dist/main.js",
+    "build": "tsc --build --verbose .",
+    "build:start": "npm run build && npm run start"
   },
   "keywords": [],
   "author": "",

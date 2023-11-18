@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import { WebScrapManager } from "./scrap/scraping-manager";
 
 export async function app() {
   /**
@@ -19,8 +20,8 @@ export async function app() {
     deviceScaleFactor: 1
   });
 
-  //const genres = await ScrapGenre(page);
-  //await saveToFile("out/genre.json", JSON.stringify(genres));
+  const webScrapManager = new WebScrapManager(page);
+  await webScrapManager.track();
 
   await browser.close();
 }

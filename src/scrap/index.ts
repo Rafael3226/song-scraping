@@ -1,9 +1,8 @@
-import { WebDocumentLoader } from "../services/WebDocumentLoader";
-import { ScrapGenres } from "./genre";
+import { ScrapGenre } from "./scrap-genre";
 // import { ScrapTracks } from './track'
 
-export async function Scrap(webLoader: WebDocumentLoader) {
-  const genres = await ScrapGenres(webLoader);
+export function Scrap(body: HTMLElement) {
+  const genres = ScrapGenre(body);
   console.log(JSON.stringify(genres));
   // await ScrapTracks(webLoader)
 }
